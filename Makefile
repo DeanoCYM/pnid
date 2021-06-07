@@ -16,6 +16,8 @@ PREFIX=/usr/local
 # Generation of an object file depends on: its respective src file any
 # local header files included, and any data files referenced, in that
 # source file.
+main.o: src/pnid_app.h
+pnid_app.o: src/pnid_app.h
 %.o: src/%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@ $(LIBS)
 

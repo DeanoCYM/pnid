@@ -2,15 +2,15 @@
    Copyright (C)  Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
    See COPYING file for licence details */
 
-/* main.c - the primary purpose of the entry point at main() is to
-   start the gtk4 event loop */
+/* main.c - instantiate and run the pnid application */
 
 #include <gtk/gtk.h>
 
-int main (void)
-{
-    
+#include "pnid_app.h"
 
-    return 0;
+int main
+(int argc, char **argv)
+{
+    return g_application_run(G_APPLICATION(pnid_app_new()), argc, argv);
 }
 
