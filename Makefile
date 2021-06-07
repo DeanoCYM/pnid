@@ -7,11 +7,13 @@ CFLAGS=-Wall -Wfatal-errors -g3 -DDEBUG
 INCLUDE=$(shell pkg-config --cflags gtk4) -I./src
 TARGET=pnid
 LIBS=$(shell pkg-config --libs gtk4)
-OBJ=main.o
+OBJ=main.o pnid_app.o
 APPLICATION_ID=cymru.ert.$(TARGET)
 PREFIX=/usr/local
 
 .PHONY: all clean tags
+
+all: $(TARGET) tags
 
 # Generation of an object file depends on: its respective src file any
 # local header files included, and any data files referenced, in that

@@ -64,7 +64,7 @@ static void pnid_app_startup(GApplication *app)
    the primary instance after the gtk event loop is terminated. If
    there are any unsaved open files, a confirmation dialog should be
    presented to the user in response to this signal. */
-static void pnid_app_shutdown(GApplication *app);
+static void pnid_app_shutdown(GApplication *app)
 {
     return;
 }
