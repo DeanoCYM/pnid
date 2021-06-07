@@ -7,8 +7,9 @@
 #include <gtk/gtk.h>
 
 #include "pnid_app.h" 
+#include "pnid_appwin.h"
 
-/* #PnidApp - pnid application class definition */
+/* #PnidApp - pnid application GObject class definition */
 struct _PnidApp {
     GtkApplication parent;
 
@@ -42,6 +43,12 @@ pnid_app_new(void)
    only once before the first instance is constructed. */
 static void pnid_app_class_init(PnidAppClass *class)
 {
+    /* override parent class signal handlers */
+    G_APPLICATION_CLASS(class)->startup  = pnid_app_startup;
+    G_APPLICATION_CLASS(class)->shutdown = pnid_app_shutdown;
+    G_APPLICATION_CLASS(class)->activate = pnid_app_activate;
+    G_APPLICATION_CLASS(class)->open     = pnid_app_open;
+    
     return;
 }
 
@@ -57,7 +64,9 @@ static void pnid_app_init(PnidApp *self)
    immediately after registration of the primary instance. */
 static void pnid_app_startup(GApplication *app)
 {
-    return;
+    /* chaining up now so that parents startup actions are performed
+       first */
+    G_APPLICATION_CLASS(pnid_app_parent_class)->startup(app);
 }
 
 /* pnid_app_shutdown(): #GApplication::shutdown handler, received by
@@ -66,15 +75,18 @@ static void pnid_app_startup(GApplication *app)
    presented to the user in response to this signal. */
 static void pnid_app_shutdown(GApplication *app)
 {
-    return;
+    // add save dialogue
+
+    /* chain-up AFTER required actions are completed*/
+    G_APPLICATION_CLASS(pnid_app_parent_class)->shutdown(app); 
 }
 
-/* pnid_app_activate(): #GApplication::activate handler, a blank
-   canvas should be opened in response to this signal. */
+/* pnid_app_activate(): #GApplication::activate handler, a UI with no
+   files loaded should be opened in response to this signal. */
 static void 
 pnid_app_activate(GApplication *app)
 {
-    return;
+    gtk_window_present(GTK_WINDOW(pnid_app_window_new(PNID_APP(app))));
 }
 
 /* pnid_app_open(): GApplication::open handler, the files provided
@@ -82,5 +94,5 @@ pnid_app_activate(GApplication *app)
 static void
 pnid_app_open(GApplication *app, GFile **files, int n_files, const char *hint)
 {
-    return;
+    // this should run pnid_app_window_open() in a loop for each file.
 }
