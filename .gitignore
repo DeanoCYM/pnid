@@ -1,1 +1,3 @@
 src/pnid_resources.c
+*.o
+pnid
