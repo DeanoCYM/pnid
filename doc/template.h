@@ -1,5 +1,5 @@
 /* This file is part of pnid
-   Copyright (C)  Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
+   Copyright (C) 2021 Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
    See COPYING file for licence details */
 
 /* template.h - a template header file */
