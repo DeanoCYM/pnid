@@ -1,41 +1,41 @@
 # pnid
 
-Brief description of project
+Piping and instrumentation diagram drawing canvas
 
 ## Description
 
-More detailed description of project
+Work in progress
 
 ### Dependencies
 
-* glibc
+* gtk4
 
 ### Compilation
 To compile this project locally and test:
 ```console
-$ make build
-$ ./test.sh
+$ make 
+$ ./pnid
 ```
-### Installation
-To compile and install the project to /usr/local/ run
-```console
-# make install
-```
-### Execution
-If /usr/local/bin is in the PATH environment variable:
-```console
-$ pnid 
-```
-Otherwise:
-```console
-$ /usr/local/bin/pnid 
-```
+<!-- ### Installation -->
+<!-- To compile and install the project to /usr/local/ run -->
+<!-- ```console -->
+<!-- # make install -->
+<!-- ``` -->
+<!-- ### Execution -->
+<!-- If /usr/local/bin is in the PATH environment variable: -->
+<!-- ```console -->
+<!-- $ pnid  -->
+<!-- ``` -->
+<!-- Otherwise: -->
+<!-- ```console -->
+<!-- $ /usr/local/bin/pnid  -->
+<!-- ``` -->
 ### Uninstallation
 To delete locally compiled files run:
 ```$ make clean```
 
-To uninstall the project from /usr/local/ run
-```# make uninstall```
+<!-- To uninstall the project from /usr/local/ run -->
+<!-- ```# make uninstall``` -->
 
 ## Author
 
@@ -43,10 +43,12 @@ Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
 
 ## Version History
 
-No current releases
+No releases, unfinished.
 
 ## License
 
-@DISCLAIMER
+This program comes with absolutely no warranty.
+
+See the GNU General Public Licence, version 3 or later for details.
 
 ## Acknowledgements
