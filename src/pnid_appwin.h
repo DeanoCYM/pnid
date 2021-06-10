@@ -1,5 +1,5 @@
 /* This file is part of pnid
-   Copyright (C)  Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
+   Copyright (C) 2021 Ellis Rhys Thomas <e.rhys.thomas@gmail.com>
    See COPYING file for licence details */
 
 /* pnid_appwin.h - pnid application window class and interface
@@ -22,7 +22,7 @@ G_DECLARE_FINAL_TYPE(PnidAppWindow, pnid_app_window, PNID, APP_WINDOW, GtkApplic
 /*
   #PnidAppWindow interface 
 */
-
+    
 PnidAppWindow *pnid_app_window_new(PnidApp *app);
 void pnid_app_window_open (PnidAppWindow *win, GFile *file);
 

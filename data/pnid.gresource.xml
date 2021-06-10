@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/cymru/ert/pnid">
+    <file preprocess="xml-stripblanks">data/ui/menu.ui</file>
+    <file>data/valve.png</file> 
+  </gresource>
+</gresources>
