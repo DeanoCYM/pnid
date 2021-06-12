@@ -12,7 +12,6 @@ struct _PnidCanvas {
     GtkDrawingArea parent;
 
     /* instance members */
-    GtkPaperSize  *page;
 };
 G_DEFINE_TYPE(PnidCanvas, pnid_canvas, GTK_TYPE_DRAWING_AREA);
 
@@ -48,7 +47,6 @@ pnid_canvas_class_init(PnidCanvasClass *class)
 static void
 pnid_canvas_init(PnidCanvas *self)
 {
-    self->page = gtk_paper_size_new(NULL);	/* NULL = locale default */
     gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(self), redraw, NULL, NULL);
 }
 

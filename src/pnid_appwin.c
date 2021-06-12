@@ -15,9 +15,11 @@ struct _PnidAppWindow {
     GtkApplicationWindow parent;
 
     /* instance members */
-    GtkWidget     *notebook;
-    GtkWidget     *headerbar;
-    GtkWidget     *menu_button; 
+    GtkPageSetup     *page_setup;
+    GtkPrintSettings *print_settings;
+    GtkWidget        *notebook;
+    GtkWidget        *headerbar;
+    GtkWidget        *menu_button; 
 };
 G_DEFINE_TYPE(PnidAppWindow, pnid_app_window, GTK_TYPE_APPLICATION_WINDOW);
 
@@ -36,6 +38,25 @@ pnid_app_window_new(PnidApp *app)
     return g_object_new(PNID_APP_WINDOW_TYPE,
 			"application", app,
 			NULL);
+}
+
+/* pnid_app_window_empty(): interface for creating a new window with a
+   blank canvas. */
+void
+pnid_app_window_empty(PnidAppWindow *self)
+{
+    GtkWidget *canvas;		/* pnid drawing area */
+    GtkWidget *scrolled_window;
+    
+    canvas = GTK_WIDGET(pnid_canvas_new(1000, 1000));
+    scrolled_window = gtk_scrolled_window_new();
+    
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), canvas);
+    gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
+			     scrolled_window,
+			     gtk_label_new("Untitled"));
+
+    gtk_widget_queue_draw(self->notebook);
 }
 
 /* pnid_app_window_open(): interface for creating a new window with
@@ -59,6 +80,21 @@ pnid_app_window_open(PnidAppWindow *self, GFile *file)
     return;
 }
 
+/* pnid_app_window_page_setup(): open the page setup dialogue and
+   update the properties for this window as appropriate. */
+void
+pnid_app_window_page_setup(PnidAppWindow *self)
+{
+    GtkPageSetup *new;
+
+    new = gtk_print_run_page_setup_dialog(GTK_WINDOW(self),
+					  self->page_setup,
+					  self->print_settings);
+    if (self->page_setup)
+	g_object_unref(self->page_setup);
+    self->page_setup = new;
+}
+
 /* pnid_app_window_class_init(): pnid application window class
    constructor, executed only once before the first instance is
    constructed. */
@@ -75,6 +111,10 @@ pnid_app_window_init(PnidAppWindow *self)
 {
     GtkBuilder *builder;
     GMenuModel *menu;
+
+    /* Page setup and print settings */
+    self->page_setup  = gtk_page_setup_new();
+    self->print_settings = gtk_print_settings_new();
 
     /* menu button */
     self->menu_button = gtk_menu_button_new();

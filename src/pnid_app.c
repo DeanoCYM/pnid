@@ -117,6 +117,7 @@ pnid_app_activate(GApplication *app)
 	win = PNID_APP_WINDOW(windows->data); /* use 1st existing window */
     else
 	win = pnid_app_window_new(PNID_APP(app));
+    pnid_app_window_empty(win);
 
     gtk_window_present(GTK_WINDOW(win));    
 }
@@ -142,12 +143,21 @@ pnid_app_open(GApplication *app, GFile **files, int n_files, const char *hint)
     gtk_window_present(GTK_WINDOW(win));    
 }
 
-/* pagesetup_activated(): app.pagesetup action, open page setup
-   dialogue. */
+/* pagesetup_activated(): app.pagesetup action, open a page setup
+   dialogue and update page settings with any user changes. */
 static void
 pagesetup_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-    printf("pagesetup_activated\n");
+    GList *windows;
+    PnidAppWindow *win;
+
+    windows = gtk_application_get_windows(GTK_APPLICATION(app));
+    if (windows)
+	win = PNID_APP_WINDOW(windows->data); /* use 1st existing window */
+    else
+	win = pnid_app_window_new(PNID_APP(app));
+    
+    pnid_app_window_page_setup(win);    
 }
 
 /* print_activated(): app.print action, open print dialogue */
