@@ -6,12 +6,15 @@
 
 #include <gtk/gtk.h>
 
+#include "pnid_draw.h"
 #include "pnid_canvas.h"
 
 struct _PnidCanvas {
     GtkDrawingArea parent;
 
     /* instance members */
+    
+
 };
 G_DEFINE_TYPE(PnidCanvas, pnid_canvas, GTK_TYPE_DRAWING_AREA);
 
@@ -62,10 +65,7 @@ redraw(GtkDrawingArea *area,
 
     context = gtk_widget_get_style_context(GTK_WIDGET(area));
 
-    cairo_arc(cr,
-	      width / 2.5, height / 2.5,
-	      MIN(width, height) / 2.5,
-	      0, 2 * G_PI);
+    pnid_draw_circle(cr, width, height);
 
     gtk_style_context_get_color(context, &color);
     gdk_cairo_set_source_rgba(cr, &color);
