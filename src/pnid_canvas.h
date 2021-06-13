@@ -19,6 +19,6 @@ G_DECLARE_FINAL_TYPE(PnidCanvas, pnid_canvas, PNID, CANVAS, GtkDrawingArea);
 /*
   #PnidCanvas interface
 */
-PnidCanvas *pnid_canvas_new(int width, int height);
+PnidCanvas *pnid_canvas_new(uint zoom_level);
 
 #endif /* __PNID_CANVAS_H */

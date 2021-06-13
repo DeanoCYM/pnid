@@ -25,6 +25,7 @@ G_DEFINE_TYPE(PnidAppWindow, pnid_app_window, GTK_TYPE_APPLICATION_WINDOW);
 
 /* Interface */
 PnidAppWindow *pnid_app_window_new(PnidApp *app);
+void pnid_app_window_empty(PnidAppWindow *self);
 void pnid_app_window_open(PnidAppWindow *win, GFile *file);
 /* Constructors */
 static void pnid_app_window_class_init(PnidAppWindowClass *class);
@@ -45,16 +46,20 @@ pnid_app_window_new(PnidApp *app)
 void
 pnid_app_window_empty(PnidAppWindow *self)
 {
-    GtkWidget *canvas;		/* pnid drawing area */
-    GtkWidget *scrolled_window;
-    
-    canvas = GTK_WIDGET(pnid_canvas_new(1000, 1000));
+    GtkWidget *scrolled_window, *canvas;
+    uint       zoom_level = 2;
+
+    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
     scrolled_window = gtk_scrolled_window_new();
     
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), canvas);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window),
+				  canvas);
     gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
 			     scrolled_window,
 			     gtk_label_new("Untitled"));
+
+    gtk_scrolled_window_set_propagate_natural_width(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
+    gtk_scrolled_window_set_propagate_natural_height(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
 
     gtk_widget_queue_draw(self->notebook);
 }
@@ -64,20 +69,22 @@ pnid_app_window_empty(PnidAppWindow *self)
 void
 pnid_app_window_open(PnidAppWindow *self, GFile *file)
 {
-    GtkWidget *canvas;		/* pnid drawing area */
-    GtkWidget *scrolled_window;
-    
-    canvas = GTK_WIDGET(pnid_canvas_new(800, 600));
+    GtkWidget *scrolled_window, *canvas;
+    uint       zoom_level = 2;
+
+    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
     scrolled_window = gtk_scrolled_window_new();
     
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), canvas);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window),
+				  canvas);
     gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
 			     scrolled_window,
 			     gtk_label_new(g_file_get_basename(file)));
 
-    gtk_widget_queue_draw(self->notebook);
+    gtk_scrolled_window_set_propagate_natural_width(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
+    gtk_scrolled_window_set_propagate_natural_height(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
 
-    return;
+    gtk_widget_queue_draw(self->notebook);
 }
 
 /* pnid_app_window_page_setup(): open the page setup dialogue and

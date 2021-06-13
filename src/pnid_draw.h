@@ -12,6 +12,3 @@
 void pnid_draw_circle(cairo_t *cr, int width, int height);
 
 #endif /* __PNID_DRAW_H */
-
-
-
