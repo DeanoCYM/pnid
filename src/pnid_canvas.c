@@ -125,12 +125,15 @@ redraw(GtkDrawingArea *area,
        int             width, int height,
        gpointer        data)
 {
-    GdkRGBA color;
+    GdkRGBA          color;
     GtkStyleContext *context;
+    uint             zoom_level;
 
+    
     context = gtk_widget_get_style_context(GTK_WIDGET(area));
+    g_object_get(G_OBJECT(area), "zoom-level", &zoom_level, NULL);
 
-    pnid_draw_circle(cr, width, height);
+    pnid_draw_circle(cr, width*zoom_level, height*zoom_level);
 
     gtk_style_context_get_color(context, &color);
     gdk_cairo_set_source_rgba(cr, &color);

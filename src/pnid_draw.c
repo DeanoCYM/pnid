@@ -16,4 +16,9 @@ pnid_draw_circle(cairo_t *cr, int width, int height)
 	      0, 2 * G_PI);
 }
 
+void
+pnid_draw_grid(cairo_t *cr, unsigned interval)
+{
 
+
+}
