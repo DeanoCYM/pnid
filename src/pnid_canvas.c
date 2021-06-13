@@ -12,11 +12,14 @@
 
 /* #PnidCanvas class definition */
 struct _PnidCanvas {
-    GtkDrawingArea  parent;
+    GtkDrawingArea   parent;
+
     /* instance members */
-    GtkPaperSize   *paper_size;
+    GtkPaperSize    *paper_size;
+    cairo_surface_t *surface;
+
     /* properties */
-    uint            zoom_level;
+    uint             zoom_level;
 };
 
 G_DEFINE_TYPE(PnidCanvas, pnid_canvas, GTK_TYPE_DRAWING_AREA);
