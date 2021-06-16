@@ -64,13 +64,27 @@ pnid_app_window_empty(PnidAppWindow *self)
     gtk_widget_queue_draw(self->notebook);
 }
 
-/* pnid_app_window_open(): interface for creating a new window with
-   file contents loaded. */
+/* pnid_app_window_open(): Open pnid drawing file in a new tab.
+
+   The notebook has already been initialised, so here a new tab is
+   added. The pnid drawing file is loaded as an instance of
+   #PnidCanvas. The canvas is itself placed within a scrolled
+   window. 
+
+   -> #GtkNotebook (already initialised)
+   --> #GtkScrolledWindow
+   ---> #PnidCanvas
+
+   The scale of the drawing is controlled by its property
+   #PnidCanvas:zoom-level. This is defaults to 1
+ */
 void
 pnid_app_window_open(PnidAppWindow *self, GFile *file)
 {
     GtkWidget *scrolled_window, *canvas;
-    uint       zoom_level = 2;
+    uint       zoom_level = 1;
+
+    g_assert(notebook);
 
     canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
     scrolled_window = gtk_scrolled_window_new();
@@ -80,9 +94,6 @@ pnid_app_window_open(PnidAppWindow *self, GFile *file)
     gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
 			     scrolled_window,
 			     gtk_label_new(g_file_get_basename(file)));
-
-    gtk_scrolled_window_set_propagate_natural_width(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
-    gtk_scrolled_window_set_propagate_natural_height(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
 
     gtk_widget_queue_draw(self->notebook);
 }
@@ -110,32 +121,38 @@ pnid_app_window_class_init(PnidAppWindowClass *class)
 {
 }
 
-/* pnid_app_window_init(): pnid application window object constructor,
-   instantiates the class and stores the resulting object at the
-   address pointed to by self. */
+/* pnid_app_window_init(): Creates a new window, provides a state
+   where a pnid drawing file can be opened using
+   pnid_app_window_open().
+
+   In the new window, a header bar contaning a menu button and window
+   controls is initialised. Beneath this, an empty notebook is
+   initialised to which tabs later be added to. 
+
+   -> #PnidAppWindow
+   --> #GtkHeaderBar
+   ---> #GtkMenuButton
+   --> #GtkNotebook
+*/
 static void
 pnid_app_window_init(PnidAppWindow *self)
 {
     GtkBuilder *builder;
     GMenuModel *menu;
 
-    /* Page setup and print settings */
     self->page_setup  = gtk_page_setup_new();
     self->print_settings = gtk_print_settings_new();
 
-    /* menu button */
     self->menu_button = gtk_menu_button_new();
     builder = gtk_builder_new_from_resource("/cymru/ert/pnid/data/ui/menu.ui");
     menu = G_MENU_MODEL(gtk_builder_get_object(builder, "menu"));
     gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(self->menu_button), menu);
     g_object_unref(builder);
 
-    /* header bar */
     self->headerbar = gtk_header_bar_new();
     gtk_header_bar_pack_end(GTK_HEADER_BAR(self->headerbar), self->menu_button);
     gtk_window_set_titlebar(GTK_WINDOW(self), GTK_WIDGET(self->headerbar));
 
-    /* notebook tabs */
     self->notebook  = gtk_notebook_new();
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(self->notebook), GTK_POS_TOP);
     gtk_window_set_child(GTK_WINDOW(self), self->notebook);
