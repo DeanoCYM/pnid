@@ -15,11 +15,13 @@ struct _PnidCanvas {
     GtkDrawingArea   parent;
 
     /* instance members */
-    GtkPaperSize    *paper_size;
     cairo_surface_t *surface;
 
     /* properties */
     uint             zoom_level;
+    uint             dpi;
+    gfloat           height;
+    gfloat           width;
 };
 
 G_DEFINE_TYPE(PnidCanvas, pnid_canvas, GTK_TYPE_DRAWING_AREA);
@@ -27,13 +29,14 @@ G_DEFINE_TYPE(PnidCanvas, pnid_canvas, GTK_TYPE_DRAWING_AREA);
 typedef enum
 {
   PROP_ZOOM_LEVEL = 1,
+  PROP_DPI,
+  PROP_HEIGHT,
+  PROP_WIDTH,
   N_PROPERTIES
 } PnidCanvasProperty;
 
 static GParamSpec *obj_properties[N_PROPERTIES] = { NULL, };
 
-/* Interface */
-PnidCanvas *pnid_canvas_new(uint zoom_level);
 /* Constructors */
 static void pnid_canvas_class_init(PnidCanvasClass *class);
 static void pnid_canvas_init(PnidCanvas *self);
@@ -45,10 +48,13 @@ static void redraw(GtkDrawingArea *area, cairo_t *cr, int width, int height, gpo
 
 /* pnid_canvas_new(): interface for creating a new empty pnid canvas */
 PnidCanvas *
-pnid_canvas_new(uint zoom_level)
+pnid_canvas_new(uint zoom_level, uint dpi, gfloat width, gfloat height)
 {
     return g_object_new(PNID_CANVAS_TYPE,
 			"zoom-level", zoom_level,
+			"dpi"       , dpi,
+			"width"     , width,
+			"height"    , height,
 			NULL);
 }
 
@@ -62,6 +68,15 @@ pnid_canvas_set_property(GObject      *self,
     switch ((PnidCanvasProperty)property_id) {
     case PROP_ZOOM_LEVEL:
 	PNID_CANVAS(self)->zoom_level = g_value_get_uint(value);
+	break;
+    case PROP_DPI:
+	PNID_CANVAS(self)->dpi = g_value_get_uint(value);
+	break;
+    case PROP_HEIGHT:
+	PNID_CANVAS(self)->height = g_value_get_float(value);
+	break;
+    case PROP_WIDTH:
+	PNID_CANVAS(self)->width = g_value_get_float(value);
 	break;
     default:
 	G_OBJECT_WARN_INVALID_PROPERTY_ID (self, property_id, pspec);
@@ -80,8 +95,17 @@ pnid_canvas_get_property(GObject      *self,
     case PROP_ZOOM_LEVEL:
 	g_value_set_uint(value, PNID_CANVAS(self)->zoom_level);
 	break;
+    case PROP_DPI:
+	g_value_set_uint(value, PNID_CANVAS(self)->dpi);
+	break;
+    case PROP_HEIGHT:
+	g_value_set_float(value, PNID_CANVAS(self)->height);
+	break;
+    case PROP_WIDTH:
+	g_value_set_float(value, PNID_CANVAS(self)->width);
+	break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID (self, property_id, pspec);
+	G_OBJECT_WARN_INVALID_PROPERTY_ID(self, property_id, pspec);
 	break;
     }
 }
@@ -97,13 +121,27 @@ pnid_canvas_class_init(PnidCanvasClass *class)
     obj_properties[PROP_ZOOM_LEVEL] =
 	g_param_spec_uint("zoom-level", "Zoom level",
 			  "Zoom level to view the canvas",
-			  1, 5, 2, /* min, max, default */
+			  1, 5, 2,              /* min, max, default */
 			  G_PARAM_READWRITE);
-    
+    obj_properties[PROP_DPI] =
+	g_param_spec_uint("dpi", "Dots per inch",
+			  "DPI of the canvas",
+			  72, 720, 72,          /* min, max, default */
+			  G_PARAM_READWRITE);
+    obj_properties[PROP_HEIGHT] =
+	g_param_spec_float("height", "Canvas height",
+			  "Height of the canvas in inches",
+			  1.0f, 100.0f, 10.0f,  /* min, max, default */
+			  G_PARAM_READWRITE);
+    obj_properties[PROP_WIDTH] =
+	g_param_spec_float("width", "Canvas width",
+			  "Width of the canvas in inches",
+			  1.0f, 100.0f, 10.0f, /* min, max, default */
+			  G_PARAM_READWRITE);
+
     g_object_class_install_properties(G_OBJECT_CLASS(class),
 				      N_PROPERTIES,
 				      obj_properties);
-    
 }
 
 /* pnid_canvas_init(): pnid canvas object constructor, instantiates
@@ -112,13 +150,14 @@ pnid_canvas_class_init(PnidCanvasClass *class)
 static void
 pnid_canvas_init(PnidCanvas *self)
 {
-    self->paper_size = gtk_page_setup_get_paper_size(gtk_page_setup_new());     // tempory until I pass the papersize
+    uint x, y;		/* resolution of canvas */
 
+    x = ceil(self->width  * self->dpi); 
+    y = ceil(self->height * self->dpi);
+    
     gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(self), redraw, NULL, NULL);
-    gtk_drawing_area_set_content_width(GTK_DRAWING_AREA(self),
-				       1 * ceil(gtk_paper_size_get_width(self->paper_size, GTK_UNIT_MM)));
-    gtk_drawing_area_set_content_height(GTK_DRAWING_AREA(self),
-					1 * ceil(gtk_paper_size_get_height(self->paper_size, GTK_UNIT_MM)));
+    gtk_drawing_area_set_content_width(GTK_DRAWING_AREA(self), x);
+    gtk_drawing_area_set_content_height(GTK_DRAWING_AREA(self), y);
 }
 
 /* redraw(): redraw the rectangle between width and height */
@@ -130,13 +169,10 @@ redraw(GtkDrawingArea *area,
 {
     GdkRGBA          color;
     GtkStyleContext *context;
-    uint             zoom_level;
-
     
     context = gtk_widget_get_style_context(GTK_WIDGET(area));
-    g_object_get(G_OBJECT(area), "zoom-level", &zoom_level, NULL);
 
-    pnid_draw_circle(cr, width*zoom_level, height*zoom_level);
+    pnid_draw_circle(cr, width, height);
 
     gtk_style_context_get_color(context, &color);
     gdk_cairo_set_source_rgba(cr, &color);

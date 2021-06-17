@@ -46,20 +46,30 @@ pnid_app_window_new(PnidApp *app)
 void
 pnid_app_window_empty(PnidAppWindow *self)
 {
-    GtkWidget *scrolled_window, *canvas;
-    uint       zoom_level = 2;
+    GtkWidget    *scrolled_window, *canvas;
+    const char   *basename;
+    GtkPaperSize *paper_size;
+    gfloat        width, height; /* printable sizes (inches) */
+    uint          dpi, zoom_level;
 
-    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
+    g_assert(self->page_setup);
+    g_assert(self->notebook);
+
+    basename = "Untitled.pnid";
+    zoom_level = 1;
+    dpi = 72;
+    paper_size = gtk_page_setup_get_paper_size(self->page_setup);
+    width = gtk_paper_size_get_width(paper_size, GTK_UNIT_INCH);
+    height = gtk_paper_size_get_height(paper_size, GTK_UNIT_INCH);
+
+    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level, dpi, width, height));
     scrolled_window = gtk_scrolled_window_new();
     
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window),
 				  canvas);
     gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
 			     scrolled_window,
-			     gtk_label_new("Untitled"));
-
-    gtk_scrolled_window_set_propagate_natural_width(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
-    gtk_scrolled_window_set_propagate_natural_height(GTK_SCROLLED_WINDOW(scrolled_window), TRUE);
+			     gtk_label_new(basename));
 
     gtk_widget_queue_draw(self->notebook);
 }
@@ -75,25 +85,36 @@ pnid_app_window_empty(PnidAppWindow *self)
    --> #GtkScrolledWindow
    ---> #PnidCanvas
 
-   The scale of the drawing is controlled by its property
-   #PnidCanvas:zoom-level. This is defaults to 1
- */
+   The size of the drawing is controlled by the #PnidCanvas
+   properties. */
 void
 pnid_app_window_open(PnidAppWindow *self, GFile *file)
 {
-    GtkWidget *scrolled_window, *canvas;
-    uint       zoom_level = 1;
+    GtkWidget    *scrolled_window, *canvas;
+    const char   *basename;
+    GtkPaperSize *paper_size;
+    gfloat        width, height; /* printable sizes (inches) */
+    uint          dpi, zoom_level;
 
+    g_assert(file);
+    g_assert(self->page_setup);
     g_assert(self->notebook);
 
-    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
+    basename = g_file_get_basename(file);
+    zoom_level = 1;
+    dpi = 72;
+    paper_size = gtk_page_setup_get_paper_size(self->page_setup);
+    width = gtk_paper_size_get_width(paper_size, GTK_UNIT_INCH);
+    height = gtk_paper_size_get_height(paper_size, GTK_UNIT_INCH);
+
+    canvas = GTK_WIDGET(pnid_canvas_new(zoom_level, dpi, width, height));
     scrolled_window = gtk_scrolled_window_new();
     
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window),
 				  canvas);
     gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook),
 			     scrolled_window,
-			     gtk_label_new(g_file_get_basename(file)));
+			     gtk_label_new(basename));
 
     gtk_widget_queue_draw(self->notebook);
 }
