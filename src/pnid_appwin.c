@@ -84,7 +84,7 @@ pnid_app_window_open(PnidAppWindow *self, GFile *file)
     GtkWidget *scrolled_window, *canvas;
     uint       zoom_level = 1;
 
-    g_assert(notebook);
+    g_assert(self->notebook);
 
     canvas = GTK_WIDGET(pnid_canvas_new(zoom_level));
     scrolled_window = gtk_scrolled_window_new();
