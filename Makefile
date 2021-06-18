@@ -43,4 +43,3 @@ clean:
 	rm -f $(TARGET)
 tags:
 	@etags src/*.c src/*.h --output=src/TAGS
-

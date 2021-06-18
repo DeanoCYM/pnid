@@ -15,3 +15,5 @@ pnid_draw_circle(cairo_t *cr, int width, int height)
 	      MIN(width, height) / 2.5,
 	      0, 2 * G_PI);
 }
+
+/* pnid_draw_vessel(): draw a vessel */
