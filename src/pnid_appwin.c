@@ -77,7 +77,7 @@ pnid_app_window_open(PnidAppWindow *self, GFile *file)
 }
 
 /* pnid_app_window_page_setup(): open the page setup dialogue and
-   update the properties for this window as appropriate. */
+   update the PnidCanvas properties. */
 void
 pnid_app_window_page_setup(PnidAppWindow *self)
 {
@@ -91,6 +91,18 @@ pnid_app_window_page_setup(PnidAppWindow *self)
 					  self->print_settings);
     g_object_unref(self->page_setup);
     self->page_setup = new;
+
+    if (self->canvas) {
+	g_object_set(self->canvas,
+		     "page_width",    gtk_page_setup_get_page_width(new, GTK_UNIT_POINTS),
+		     "page_height",   gtk_page_setup_get_page_height(new, GTK_UNIT_POINTS),
+		     "top_margin",    gtk_page_setup_get_top_margin(new, GTK_UNIT_POINTS),
+		     "bottom_margin", gtk_page_setup_get_bottom_margin(new, GTK_UNIT_POINTS),
+		     "left_margin",   gtk_page_setup_get_left_margin(new, GTK_UNIT_POINTS),
+		     "right_margin",  gtk_page_setup_get_right_margin(new, GTK_UNIT_POINTS),
+		     NULL);
+	gtk_widget_queue_draw(GTK_WIDGET(self->canvas));
+    }
 }
 
 /* pnid_app_window_class_init(): pnid application window class

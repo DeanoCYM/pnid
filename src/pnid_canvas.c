@@ -202,7 +202,7 @@ redraw(GtkDrawingArea *area,
   PnidCanvas *self = PNID_CANVAS(area); 
 
   #ifndef G_DISABLE_ASSERT
-  fputs("==== #PnidCanvas redraw callback ====\n", stderr);  
+  fputs("==== #PnidCanvas::redraw() callback ====\n", stderr);  
   fprintf(stderr, "#PnidCanvas::redraw(width=%d, height=%d)\n", width, height);
   fprintf(stderr, "#PnidCanvas:page_height=%gpt\n", self->page_height);  
   fprintf(stderr, "#PnidCanvas:page_width=%gpt\n", self->page_width);  
@@ -216,27 +216,15 @@ redraw(GtkDrawingArea *area,
 
   cairo_scale(cr, self->zoom_level, self->zoom_level); 
 
+  /* blank page with margins */
   cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
   cairo_rectangle(cr, 0, 0, self->page_width, self->page_height);
   cairo_fill(cr);
-
   cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
   cairo_rectangle(cr,
 		  self->left_margin,
 		  self->top_margin,
-		  self->page_width  - self->right_margin,
-		  self->page_height - self->left_margin);
+		  self->page_width  - self->right_margin  - self->left_margin,
+		  self->page_height - self->bottom_margin - self->top_margin);
   cairo_fill(cr);
-
-  /* cairo_set_source_rgb(cr, 0.5, 0, 0); */
-  /* cairo_rectangle(cr, self->top_, 0, self->page_width, self->page_height); */
-  /* cairo_fill(cr); */
-
-  /* Demo */
-  cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
-  cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
-			 CAIRO_FONT_WEIGHT_NORMAL);
-  cairo_set_font_size(cr, 40.0);
-  cairo_move_to(cr, 10.0, 50.0);
-  cairo_show_text(cr, "Disziplin ist Macht.");
 }
