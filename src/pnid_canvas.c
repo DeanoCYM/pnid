@@ -10,6 +10,9 @@
 #include "pnid_draw.h"
 #include "pnid_canvas.h"
 
+#define PNID_CANVAS_BACKGROUND_PT        10 /* Size of background behind page */
+#define PNID_CANVAS_MARGIN_LENGTH_PT     30 /* Length of margin lines */
+
 /* #PnidCanvas class definition */
 struct _PnidCanvas {
   GtkDrawingArea   parent;
@@ -216,15 +219,21 @@ redraw(GtkDrawingArea *area,
 
   cairo_scale(cr, self->zoom_level, self->zoom_level); 
 
-  /* blank page with margins */
+  /* Background */
   cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
+  cairo_rectangle(cr, 0, 0, width, height);
+  cairo_fill(cr);
+
+  /* Outside page */
+  cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+  cairo_translate(cr, PNID_CANVAS_BACKGROUND_PT, PNID_CANVAS_BACKGROUND_PT);
   cairo_rectangle(cr, 0, 0, self->page_width, self->page_height);
   cairo_fill(cr);
-  cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-  cairo_rectangle(cr,
-		  self->left_margin,
-		  self->top_margin,
-		  self->page_width  - self->right_margin  - self->left_margin,
-		  self->page_height - self->bottom_margin - self->top_margin);
-  cairo_fill(cr);
+  
+  cairo_set_source_rgb(cr, 0.75, 0.75, 0.75);
+  cairo_translate(cr, self->left_margin, self->top_margin);
+  cairo_rectangle(cr, 0, 0,
+		  self->page_width - self->left_margin - self->right_margin,
+		  self->page_height - self->top_margin - self->bottom_margin);
+  cairo_stroke(cr);
 }
