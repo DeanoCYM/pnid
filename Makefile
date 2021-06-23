@@ -7,7 +7,7 @@ CFLAGS=-Wall -Wfatal-errors -g3 -O0 -DDEBUG
 INCLUDE=$(shell pkg-config --cflags gtk4) -I./src
 TARGET=pnid
 LIBS=$(shell pkg-config --libs gtk4) -lm
-OBJ=main.o pnid_app.o pnid_appwin.o pnid_canvas.o pnid_resources.o pnid_draw.o pnid_bbox.o pnid_obj.o
+OBJ=main.o pnid_app.o pnid_appwin.o pnid_canvas.o pnid_resources.o pnid_draw.o pnid_bbox.o pnid_obj.o pnid_sdb.o
 APPLICATION_ID=cymru.ert.$(TARGET)
 PREFIX=/usr/local
 
