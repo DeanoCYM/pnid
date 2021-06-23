@@ -88,7 +88,7 @@ pnid_bbox_get_perimeter(struct pnid_bbox *a)
 
 /* pnid_bbox_is_separate(): truthy only when rectangles share no common
    areas. */
-static int
+int
 pnid_bbox_is_separate(struct pnid_bbox *a, struct pnid_bbox *b)
 {
      return
@@ -100,7 +100,7 @@ pnid_bbox_is_separate(struct pnid_bbox *a, struct pnid_bbox *b)
 
 /* pnid_bbox_is_overlap(): truthy only when rectangles share some common
    area */
-static int
+int
 pnid_bbox_is_overlap(struct pnid_bbox *a, struct pnid_bbox *b)
 {
     return !pnid_bbox_is_separate(a, b);

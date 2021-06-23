@@ -36,8 +36,8 @@ unsigned pnid_bbox_get_perimeter  (PnidBBox *a);
 PnidBBox pnid_bbox_get_mbr (int n, PnidBBox *a, ...);
 
 /* Determine if the area of two rectangles overlap or not */
-static int pnid_bbox_is_separate (PnidBBox *a, PnidBBox *b);
-static int pnid_bbox_is_overlap  (PnidBBox *a, PnidBBox *b);
+int pnid_bbox_is_separate (PnidBBox *a, PnidBBox *b);
+int pnid_bbox_is_overlap  (PnidBBox *a, PnidBBox *b);
 
 /* Set basic properties of a rectangle a */
 void pnid_bbox_set_left   (PnidBBox *a, unsigned left);
