@@ -7,7 +7,7 @@ CFLAGS=-Wall -Wfatal-errors -g3 -O0 -DDEBUG
 INCLUDE=$(shell pkg-config --cflags gtk4) -I./src
 TARGET=pnid
 LIBS=$(shell pkg-config --libs gtk4) -lm
-OBJ=main.o pnid_app.o pnid_appwin.o pnid_canvas.o pnid_resources.o pnid_draw.o pnid_bbox.o
+OBJ=main.o pnid_app.o pnid_appwin.o pnid_canvas.o pnid_resources.o pnid_draw.o pnid_bbox.o pnid_obj.o
 APPLICATION_ID=cymru.ert.$(TARGET)
 PREFIX=/usr/local
 
@@ -22,7 +22,9 @@ src/pnid_resources.c: data/pnid.gresource.xml data/ui/menu.ui data/valve.png
 # Generation of an object file depends on: its respective src file any
 # local header files included, and any data files referenced, in that
 # source file.
+pnid_obj.o:    src/pnid_obj.h
 pnid_bbox.o:   src/pnid_bbox.h
+pnid_sdb.o:    src/pnid_sdb.h src/pnid_bbox.h src/pnid_obj.h
 pnid_draw.o:   src/pnid_draw.h   
 pnid_canvas.o: src/pnid_canvas.h src/pnid_draw.h
 pnid_appwin.o: src/pnid_app.h src/pnid_appwin.h src/pnid_canvas.h src/pnid_resources.c
