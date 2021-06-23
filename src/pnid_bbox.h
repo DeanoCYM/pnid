@@ -23,21 +23,21 @@ typedef struct pnid_coord PnidCoord;
 typedef struct pnid_bbox  PnidBBox;
 
 /* Get basic properties of the rectangle a */
-unsigned pnid_bbox_get_left   	  (PnidBBox *a);
-unsigned pnid_bbox_get_right  	  (PnidBBox *a);
-unsigned pnid_bbox_get_top    	  (PnidBBox *a);
-unsigned pnid_bbox_get_bottom 	  (PnidBBox *a);
-unsigned pnid_bbox_get_height 	  (PnidBBox *a);
-unsigned pnid_bbox_get_width  	  (PnidBBox *a);
-unsigned pnid_bbox_get_perimeter  (PnidBBox *a);
+unsigned pnid_bbox_get_left   	  (const PnidBBox *a);
+unsigned pnid_bbox_get_right  	  (const PnidBBox *a);
+unsigned pnid_bbox_get_top    	  (const PnidBBox *a);
+unsigned pnid_bbox_get_bottom 	  (const PnidBBox *a);
+unsigned pnid_bbox_get_height 	  (const PnidBBox *a);
+unsigned pnid_bbox_get_width  	  (const PnidBBox *a);
+unsigned pnid_bbox_get_perimeter  (const PnidBBox *a);
 
 /* Returns the minimum bounding rectangle from a list of count
    rectangles */
-PnidBBox pnid_bbox_get_mbr (int n, PnidBBox *a, ...);
+PnidBBox pnid_bbox_get_mbr (const PnidBBox *a, const PnidBBox *b);
 
 /* Determine if the area of two rectangles overlap or not */
-int pnid_bbox_is_separate (PnidBBox *a, PnidBBox *b);
-int pnid_bbox_is_overlap  (PnidBBox *a, PnidBBox *b);
+int pnid_bbox_is_separate (const PnidBBox *a, const PnidBBox *b);
+int pnid_bbox_is_overlap  (const PnidBBox *a, const PnidBBox *b);
 
 /* Set basic properties of a rectangle a */
 void pnid_bbox_set_left   (PnidBBox *a, unsigned left);
