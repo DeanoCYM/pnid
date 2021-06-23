@@ -17,7 +17,6 @@ struct _PnidAppWindow {
     /* instance members */
     GtkPageSetup     *page_setup;
     GtkPrintSettings *print_settings;
-    GtkWidget        *notebook;
     GtkWidget        *headerbar;
     GtkWidget        *menu_button;
     GtkWidget        *canvas; 
@@ -47,33 +46,43 @@ pnid_app_window_new(PnidApp *app)
 void
 pnid_app_window_empty(PnidAppWindow *self)
 {
-    g_assert(NULL && "NOT IMPLEMENTED");
+    GtkPaperSize *paper_size;
+
+    g_assert_null(self->canvas); /* remove when mutli files supported */
+
+    if (self->page_setup == NULL) {
+	self->page_setup = gtk_page_setup_new();
+	gtk_page_setup_set_orientation(self->page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
+    }
+    paper_size =  gtk_page_setup_get_paper_size(self->page_setup);
+    
+    
+    self->canvas = GTK_WIDGET(pnid_canvas_new(paper_size, 1));
+    gtk_window_set_child(GTK_WINDOW(self), GTK_WIDGET(self->canvas));
+    gtk_widget_queue_draw(self->canvas);
 }
 
-/* pnid_app_window_open(): Open pnid drawing file in a new tab.
+/* pnid_app_window_open(): Open a pnid drawing file.
 
-   The notebook has already been initialised, so here a new tab is
-   added. The pnid drawing file is loaded as an instance of
-   #PnidCanvas. The canvas is itself placed within a scrolled
-   window. 
+   -> #PnidAppWindow
+   --> #PnidCanvas
 
-   -> #GtkNotebook (already initialised)
-   --> #GtkScrolledWindow // NOT IMPLEMENTED YET
-   ---> #PnidCanvas
-
-   The size of the drawing is controlled by the #PnidCanvas
-   properties. */
+   Currently only supports opening a maximum of one file at any time. */
 void
 pnid_app_window_open(PnidAppWindow *self, GFile *file)
 {
+    GtkPaperSize *paper_size;
+
     g_assert(file);
-    g_assert(self->page_setup);
-    g_assert(self->notebook);
+    g_assert_null(self->canvas); /* remove when mutli files supported */
 
-    self->canvas = GTK_WIDGET(pnid_canvas_new(gtk_page_setup_get_paper_size(self->page_setup), 1));
-    gtk_notebook_append_page(GTK_NOTEBOOK(self->notebook), self->canvas, gtk_label_new(g_file_get_basename(file)));
-
-    gtk_widget_queue_draw(self->notebook);
+    if (self->page_setup == NULL)
+	self->page_setup = gtk_page_setup_new();
+    paper_size =  gtk_page_setup_get_paper_size(self->page_setup);
+    
+    self->canvas = GTK_WIDGET(pnid_canvas_new(paper_size, 1));
+    gtk_window_set_child(GTK_WINDOW(self), GTK_WIDGET(self->canvas));
+    gtk_widget_queue_draw(self->canvas);
 }
 
 /* pnid_app_window_page_setup(): open the page setup dialogue and
@@ -83,16 +92,16 @@ pnid_app_window_page_setup(PnidAppWindow *self)
 {
     GtkPageSetup *new;
 
-    g_assert(self->print_settings);
-    g_assert(self->page_setup);
+    if (self->print_settings == NULL)
+	self->print_settings = gtk_print_settings_new();
 
-    new = gtk_print_run_page_setup_dialog(GTK_WINDOW(self),
-					  self->page_setup,
-					  self->print_settings);
-    g_object_unref(self->page_setup);
+    new = gtk_print_run_page_setup_dialog(GTK_WINDOW(self), self->page_setup, self->print_settings);
+
+    if (self->page_setup)
+	g_object_unref(self->page_setup);
     self->page_setup = new;
 
-    if (self->canvas) {
+    if (self->canvas) {		/* Update the canvas */
 	g_object_set(self->canvas,
 		     "page_width",    gtk_page_setup_get_page_width(new, GTK_UNIT_POINTS),
 		     "page_height",   gtk_page_setup_get_page_height(new, GTK_UNIT_POINTS),
@@ -118,22 +127,17 @@ pnid_app_window_class_init(PnidAppWindowClass *class)
    pnid_app_window_open().
 
    In the new window, a header bar contaning a menu button and window
-   controls is initialised. Beneath this, an empty notebook is
-   initialised to which tabs later be added to. 
+   controls is initialised. 
 
    -> #PnidAppWindow
    --> #GtkHeaderBar
    ---> #GtkMenuButton
-   --> #GtkNotebook
 */
 static void
 pnid_app_window_init(PnidAppWindow *self)
 {
     GtkBuilder *builder;
     GMenuModel *menu;
-
-    self->print_settings = gtk_print_settings_new();
-    self->page_setup = gtk_page_setup_new();
 
     self->menu_button = gtk_menu_button_new();
     builder = gtk_builder_new_from_resource("/cymru/ert/pnid/data/ui/menu.ui");
@@ -144,10 +148,6 @@ pnid_app_window_init(PnidAppWindow *self)
     self->headerbar = gtk_header_bar_new();
     gtk_header_bar_pack_end(GTK_HEADER_BAR(self->headerbar), self->menu_button);
     gtk_window_set_titlebar(GTK_WINDOW(self), GTK_WIDGET(self->headerbar));
-
-    self->notebook = gtk_notebook_new();
-    gtk_notebook_set_tab_pos(GTK_NOTEBOOK(self->notebook), GTK_POS_TOP);
-    gtk_window_set_child(GTK_WINDOW(self), self->notebook);
     
     return; 
 }
