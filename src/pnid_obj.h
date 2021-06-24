@@ -11,11 +11,11 @@
 
 typedef struct pnid_obj PnidObj; 
 
-PnidObj * pnid_obj_new(void);
+PnidObj  *pnid_obj_new(void);
 void      pnid_obj_delete(PnidObj *self);
 
 int       pnid_obj_get_data(PnidObj *self);
-PnidObj  *pnid_obj_get_bbox(PnidObj *self);
+PnidBBox *pnid_obj_get_bbox(PnidObj *self);
 
 void      pnid_obj_set_data(PnidObj *self, int data);
 
