@@ -4,6 +4,8 @@
 
 /* pnid_bbox.c - pnid bounding box, a rectangle */
 
+#include <assert.h>
+
 #include "pnid_bbox.h"
 
 static unsigned min(unsigned x, unsigned y);
@@ -13,6 +15,8 @@ static unsigned max(unsigned x, unsigned y);
 unsigned
 pnid_bbox_get_left(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return a->nw.x;
 }
 
@@ -20,6 +24,8 @@ pnid_bbox_get_left(const struct pnid_bbox *a)
 void
 pnid_bbox_set_left(struct pnid_bbox *a, unsigned left)
 {
+    assert(a);
+
     a->nw.x = left;
 }
 
@@ -27,6 +33,8 @@ pnid_bbox_set_left(struct pnid_bbox *a, unsigned left)
 unsigned
 pnid_bbox_get_right(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return a->se.x;
 }
 
@@ -34,6 +42,8 @@ pnid_bbox_get_right(const struct pnid_bbox *a)
 void
 pnid_bbox_set_right(struct pnid_bbox *a, unsigned right)
 {
+    assert(a);
+
     a->se.x = right;
 }
 
@@ -41,6 +51,8 @@ pnid_bbox_set_right(struct pnid_bbox *a, unsigned right)
 unsigned
 pnid_bbox_get_top(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return a->nw.y;
 }
 
@@ -48,6 +60,8 @@ pnid_bbox_get_top(const struct pnid_bbox *a)
 void
 pnid_bbox_set_top(struct pnid_bbox *a, unsigned top)
 {
+    assert(a);
+
     a->nw.y = top;
 }
 
@@ -55,6 +69,8 @@ pnid_bbox_set_top(struct pnid_bbox *a, unsigned top)
 unsigned
 pnid_bbox_get_bottom(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return a->se.y;
 }
 
@@ -62,6 +78,8 @@ pnid_bbox_get_bottom(const struct pnid_bbox *a)
 void
 pnid_bbox_set_bottom(struct pnid_bbox *a, unsigned bottom)
 {
+    assert(a);
+
     a->se.y = bottom;
 }
 
@@ -69,6 +87,8 @@ pnid_bbox_set_bottom(struct pnid_bbox *a, unsigned bottom)
 unsigned
 pnid_bbox_get_height(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return pnid_bbox_get_bottom(a) - pnid_bbox_get_top(a); 
 }
 
@@ -76,6 +96,8 @@ pnid_bbox_get_height(const struct pnid_bbox *a)
 unsigned
 pnid_bbox_get_width(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return pnid_bbox_get_left(a) - pnid_bbox_get_right(a);
 }
 
@@ -83,7 +105,18 @@ pnid_bbox_get_width(const struct pnid_bbox *a)
 unsigned
 pnid_bbox_get_perimeter(const struct pnid_bbox *a)
 {
+    assert(a);
+
     return 2 * (pnid_bbox_get_width(a) + pnid_bbox_get_width(a));
+}
+
+/* pnid_bbox_get_area(): length of the perimiter */
+unsigned
+pnid_bbox_get_area(const struct pnid_bbox *a)
+{
+    assert(a);
+
+    return pnid_bbox_get_width(a) * pnid_bbox_get_height(a);
 }
 
 /* pnid_bbox_is_separate(): truthy only when rectangles share no common
@@ -91,6 +124,8 @@ pnid_bbox_get_perimeter(const struct pnid_bbox *a)
 int
 pnid_bbox_is_separate(const struct pnid_bbox *a, const struct pnid_bbox *b)
 {
+    assert(a && b);
+
      return
 	 pnid_bbox_get_left(a)   > pnid_bbox_get_right(b)  &&
 	 pnid_bbox_get_right(a)  < pnid_bbox_get_left(b)   &&
@@ -106,19 +141,20 @@ pnid_bbox_is_overlap(const struct pnid_bbox *a, const struct pnid_bbox *b)
     return !pnid_bbox_is_separate(a, b);
 }
 
-/* pnid_bbox_mbr(): returns minimum bounding region of two
-   rectangles */
-struct pnid_bbox  
-pnid_bbox_get_mbr(const struct pnid_bbox *a, const struct pnid_bbox *b)
+/* pnid_bbox_mbr(): stores minimum bounding region of two
+   rectangles a and b in res, returns area increase from a */
+unsigned
+pnid_bbox_mbr(const struct pnid_bbox *a, const struct pnid_bbox *b,
+	      struct pnid_bbox *mbr)
 {
-    struct pnid_bbox mbr;
+    assert(a && b && mbr);
 
-    mbr.nw.x = min(a->nw.x, b->nw.x); /* left */
-    mbr.se.x = max(a->se.x, b->se.x); /* right */
-    mbr.nw.y = min(a->nw.y, b->nw.y); /* top */
-    mbr.se.y = max(a->se.y, b->se.y); /* bottom */
+    mbr->nw.x = min(a->nw.x, b->nw.x); /* left */
+    mbr->se.x = max(a->se.x, b->se.x); /* right */
+    mbr->nw.y = min(a->nw.y, b->nw.y); /* top */
+    mbr->se.y = max(a->se.y, b->se.y); /* bottom */
 
-    return mbr;
+    return pnid_bbox_get_area(mbr) - pnid_bbox_get_area(a);
 }
 
 static unsigned

@@ -32,9 +32,9 @@ unsigned pnid_bbox_get_width  	  (const PnidBBox *a);
 unsigned pnid_bbox_get_perimeter  (const PnidBBox *a);
 unsigned pnid_bbox_get_area       (const PnidBBox *a);  
 
-/* Returns the minimum bounding rectangle from a list of count
-   rectangles */
-PnidBBox pnid_bbox_get_mbr (const PnidBBox *a, const PnidBBox *b);
+/* Stores the minimum bounding rectangle large enough to contain
+   rectangles a and b in res and returns the increase in area. */
+unsigned pnid_bbox_mbr (const PnidBBox *a, const PnidBBox *b, PnidBBox *mbr);
 
 /* Determine if the area of two rectangles overlap or not */
 int pnid_bbox_is_separate (const PnidBBox *a, const PnidBBox *b);
