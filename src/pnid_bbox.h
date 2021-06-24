@@ -22,7 +22,7 @@ struct pnid_bbox {
 typedef struct pnid_coord PnidCoord;
 typedef struct pnid_bbox  PnidBBox;
 
-/* Get basic properties of the rectangle a */
+/* Get properties of the rectangle a */
 unsigned pnid_bbox_get_left   	  (const PnidBBox *a);
 unsigned pnid_bbox_get_right  	  (const PnidBBox *a);
 unsigned pnid_bbox_get_top    	  (const PnidBBox *a);
@@ -30,6 +30,7 @@ unsigned pnid_bbox_get_bottom 	  (const PnidBBox *a);
 unsigned pnid_bbox_get_height 	  (const PnidBBox *a);
 unsigned pnid_bbox_get_width  	  (const PnidBBox *a);
 unsigned pnid_bbox_get_perimeter  (const PnidBBox *a);
+unsigned pnid_bbox_get_area       (const PnidBBox *a);  
 
 /* Returns the minimum bounding rectangle from a list of count
    rectangles */

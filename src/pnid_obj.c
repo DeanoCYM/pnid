@@ -41,7 +41,7 @@ pnid_obj_get_data(struct pnid_obj *self)
 
 /* pnid_obj_get_bbox(): returns the minimal bounding region of the
    pnid object. */
-struct pnid_obj *
+PnidBBox *
 pnid_obj_get_bbox(PnidObj *self)
 {
     return self->mbr;
