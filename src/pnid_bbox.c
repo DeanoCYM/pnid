@@ -141,20 +141,24 @@ pnid_bbox_is_overlap(const struct pnid_bbox *a, const struct pnid_bbox *b)
     return !pnid_bbox_is_separate(a, b);
 }
 
-/* pnid_bbox_mbr(): stores minimum bounding region of two
-   rectangles a and b in res, returns area increase from a */
+/* pnid_bbox_mbr(): returns the area increase in the bounding
+   rectangle a when b is added to it. Resultant mbr is stored at the
+   provided address, unless mbr is a null pointer. */
 unsigned
 pnid_bbox_mbr(const struct pnid_bbox *a, const struct pnid_bbox *b,
 	      struct pnid_bbox *mbr)
 {
-    assert(a && b && mbr);
+    struct pnid_bbox tmp;
 
-    mbr->nw.x = min(a->nw.x, b->nw.x); /* left */
-    mbr->se.x = max(a->se.x, b->se.x); /* right */
-    mbr->nw.y = min(a->nw.y, b->nw.y); /* top */
-    mbr->se.y = max(a->se.y, b->se.y); /* bottom */
+    tmp.nw.x = min(a->nw.x, b->nw.x); /* left */
+    tmp.se.x = max(a->se.x, b->se.x); /* right */
+    tmp.nw.y = min(a->nw.y, b->nw.y); /* top */
+    tmp.se.y = max(a->se.y, b->se.y); /* bottom */
 
-    return pnid_bbox_get_area(mbr) - pnid_bbox_get_area(a);
+    if (mbr)
+	*mbr = tmp;
+
+    return pnid_bbox_get_area(&tmp) - pnid_bbox_get_area(a);
 }
 
 static unsigned
