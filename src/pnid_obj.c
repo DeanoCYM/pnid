@@ -8,7 +8,8 @@
 #include <assert.h>
 
 struct pnid_obj {
-    int data;
+    int       data;
+    PnidBBox *mbr;		/* minimal bounding region */
 };
 
 /* pnid_obj_new(): allocate memory for a new pnid object */
@@ -32,6 +33,14 @@ pnid_obj_get_data(struct pnid_obj *self)
 {
     assert(self);
     return self->data;
+}
+
+/* pnid_obj_get_bbox(): returns the minimal bounding region of the
+   pnid object. */
+PnidObj  *
+pnid_obj_get_bbox(PnidObj *self)
+{
+    return self->bbox;
 }
 
 /* pnid_obj_set_data(): set the data property of a pnid object */
