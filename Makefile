@@ -22,7 +22,7 @@ src/pnid_resources.c: data/pnid.gresource.xml data/ui/menu.ui data/valve.png
 # Generation of an object file depends on: its respective src file any
 # local header files included, and any data files referenced, in that
 # source file.
-pnid_obj.o:    src/pnid_obj.h
+pnid_obj.o:    src/pnid_obj.h src/pnid_bbox.h
 pnid_bbox.o:   src/pnid_bbox.h
 pnid_sdb.o:    src/pnid_sdb.h src/pnid_bbox.h src/pnid_obj.h
 pnid_draw.o:   src/pnid_draw.h   
