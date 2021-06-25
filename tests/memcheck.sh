@@ -17,7 +17,7 @@ valgrind \
     --log-file=vgdump \
     --suppressions="/usr/share/glib-2.0/valgrind/glib.supp" \
     --suppressions="/usr/share/gtk-4.0/valgrind/gtk.supp"   \
-    ./pnid
+    "$@"
 
 
 

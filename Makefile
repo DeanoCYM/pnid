@@ -11,7 +11,7 @@ OBJ=main.o pnid_app.o pnid_appwin.o pnid_canvas.o pnid_resources.o pnid_draw.o p
 APPLICATION_ID=cymru.ert.$(TARGET)
 PREFIX=/usr/local
 
-.PHONY: all clean tags
+.PHONY: all clean tags tests
 
 all: $(TARGET) tags
 
@@ -36,6 +36,12 @@ main.o:        src/pnid_app.h
 # Target executable generation
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDE) $(OBJ) -o $@ $(LIBS)
+
+# Testing
+tests: all tests/tests.h tests/test_sdb
+
+tests/%: tests/%.c
+	$(CC) $(CFLAGS) $(INCLUDE) $(OBJ) $< -o $@ $(LIBS)
 
 # Utilities
 clean:
