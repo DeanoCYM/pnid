@@ -5,19 +5,20 @@
 /* test_rtree.c - tests for pnid R-tree */
 
 #include <stdio.h>
+#include <assert.h>
 
 #include "pnid_rtree.h"
 
-#include "tests/tests.h"
+#include "pnid_tests.h"
 
-int main(void)
+int test_rtree(void)
 {
-    int res;
+    printf("Creating new R-tree... ");
+    PnidRtree *db = pnid_rtree_new();
+    assert(db != NULL);
+    printf("OK.\n");
 
-    res = 0;
-    fprintf(stderr, "Testing %s\n", res ? "Failed" : "Passed");
-
-    return res;
+    return 0;
 }
 
 

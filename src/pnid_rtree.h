@@ -9,17 +9,16 @@
 #define __PNID_RTREE_H
 
 #include "pnid_obj.h"
-#include "pnid_bbox.h"
+#include "pnid_box.h"
 
 /* #PnidRtree: the spatial database  */
-typedef struct pnid_rtee PnidRtree;
+typedef struct pnid_rtree PnidRtree;
 
-/* PnidAction: callback to apply to found entries when searching
-   spatial the R-tree */
-typedef void (*PnidRtreeCb)(void *, PnidObj *);
-
-/* Create and destroy a spatial database */
+/* Create and destroy the database */
 PnidRtree *pnid_rtree_new(void);
+void       pnid_rtree_delete(PnidRtree *db); 
 
+/* Add and remove entries to the database */
+int pnid_rtree_insert(PnidRtree *db, PnidObj *entry);
 
 #endif /* __PNID_RTREE_H */
