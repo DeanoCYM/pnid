@@ -7,13 +7,13 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "pnid_bbox.h"
+#include "pnid_box.h"
 
 #include "pnid_obj.h" 
 
 struct pnid_obj {
     int       data;
-    PnidBBox *mbr;		/* minimal bounding region */
+    PnidBox  *mbr;		/* minimal bounding region */
 };
 
 /* pnid_obj_new(): allocate memory for a new pnid object */
@@ -39,10 +39,10 @@ pnid_obj_get_data(struct pnid_obj *self)
     return self->data;
 }
 
-/* pnid_obj_get_bbox(): returns the minimal bounding region of the
+/* pnid_obj_get_box(): returns the minimal bounding region of the
    pnid object. */
-PnidBBox *
-pnid_obj_get_bbox(PnidObj *self)
+PnidBox *
+pnid_obj_get_box(PnidObj *self)
 {
     return self->mbr;
 }
