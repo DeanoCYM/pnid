@@ -230,6 +230,7 @@ split_leaf(struct node *n, struct entry *e)
   /* populate pair from pool  */
   src = pool + len-2;
   while (--src - pool) {
+
     /* check if one group has so few entries that all the rest must be
        assigned for it to have the minimum number of entries. */
     for (i = 0;  i < 2; ++i)
@@ -240,13 +241,13 @@ split_leaf(struct node *n, struct entry *e)
       }
 
     /* sort the pool according to the entry with the greatest
-       preference for one group in acending order and assign the last
-       element to the node that requires the least mbr growth. */
+       preference for one group in acending order. */
     qsort_r(pool, src-pool, sizeof *pool, compare_mbr, pair);
     
     d = GROWTH( &(pair[0]->mbr), (*src)->bbox)
       - GROWTH( &(pair[0]->mbr), (*src)->bbox);
 
+    /* assign an entry according to its mbr preference  */
     if (d > 0) {
       *dest[0] = *src--;
       update_mbr(pair[0]);
@@ -266,9 +267,10 @@ split_leaf(struct node *n, struct entry *e)
     }
   }
 
+
   free(pool);
 
-  assert(count_entries(pair[0])  >= RTREE_MIN);
+  assert(count_entries(pair[0]) >= RTREE_MIN);
   assert(count_entries(pair[1]) >= RTREE_MIN);
 
   return pair[1];
