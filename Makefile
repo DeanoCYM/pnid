@@ -39,7 +39,7 @@ $(TARGET): main.o $(OBJ)
 
 # Testing
 tests: $(OBJ) $(TESTS) tests/pnid_tests.h
-	tests/memcheck.sh ./pnid_tests
+	./pnid_tests
 test_%.o: tests/test_%.c pnid_%.o
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@ $(LIBS)
 $(TESTS): tests/test_main.o $(TESTOBJ)
@@ -47,7 +47,7 @@ $(TESTS): tests/test_main.o $(TESTOBJ)
 
 # Utilities
 clean:
-	rm -f vgdump
+	rm -f vgdump.core.*
 	rm -f src/TAGS
 	rm -f src/pnid_resources.c
 	rm -f $(TESTOBJ)
