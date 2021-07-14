@@ -15,9 +15,11 @@ PnidObj  *pnid_obj_new(void);
 void      pnid_obj_delete(PnidObj *self);
 
 int       pnid_obj_get_data(PnidObj *self);
-PnidBox  *pnid_obj_get_box(PnidObj *self);
-
 void      pnid_obj_set_data(PnidObj *self, int data);
+
+PnidBox   pnid_obj_bbox(PnidObj *self);
+
+
 
 
 #endif /* PNID_OBJ_H */

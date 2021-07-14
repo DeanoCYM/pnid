@@ -13,7 +13,7 @@
 
 struct pnid_obj {
     int       data;
-    PnidBox  *mbr;		/* minimal bounding region */
+    PnidBox   mbr;		/* minimal bounding region */
 };
 
 /* pnid_obj_new(): allocate memory for a new pnid object */
@@ -39,10 +39,9 @@ pnid_obj_get_data(struct pnid_obj *self)
     return self->data;
 }
 
-/* pnid_obj_get_box(): returns the minimal bounding region of the
-   pnid object. */
-PnidBox *
-pnid_obj_get_box(PnidObj *self)
+/* pnid_obj_get_box(): bounding box the pnid object. */
+PnidBox 
+pnid_obj_bbox(PnidObj *self)
 {
     return self->mbr;
 }
@@ -52,7 +51,13 @@ void
 pnid_obj_set_data(struct pnid_obj *self, int data)
 {
     assert(self);
+
     self->data = data;
+
+    pnid_box_set_left   (&self->mbr, 0.5*data);
+    pnid_box_set_right  (&self->mbr, data);
+    pnid_box_set_top    (&self->mbr, 2*data);
+    pnid_box_set_bottom (&self->mbr, data);
 }
     
 
