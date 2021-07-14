@@ -85,7 +85,7 @@ pnid_box_copy(const struct pnid_box *a)
 unsigned
 pnid_box_width(const struct pnid_box *a)
 {
-    return pnid_box_get_left(a) - pnid_box_get_right(a);
+    return pnid_box_get_right(a) - pnid_box_get_left(a);
 }
 
 /* pnid_box_perimeter(): length of the perimiter */
@@ -121,8 +121,8 @@ pnid_box_mbr(const struct pnid_box *a, const struct pnid_box *b)
     struct pnid_box ab;
 
     ab.nw.x = umin(a->nw.x, b->nw.x); /* left */
-    ab.se.x = umax(a->se.x, b->se.x); /* right */
     ab.nw.y = umin(a->nw.y, b->nw.y); /* top */
+    ab.se.x = umax(a->se.x, b->se.x); /* right */
     ab.se.y = umax(a->se.y, b->se.y); /* bottom */
 
     return ab;
