@@ -13,29 +13,47 @@
 
 #define RANDOM ((rand() % 100))	/* randomish number between 1-100 */
 
+PnidRtree *tr;
+PnidObj   *o;
+
+/* test_new(): unit test for pnid_rtree_new(). */
+static void test_new(void)
+{
+  tr = pnid_rtree_new();
+  assert(tr);
+}
+/* test_insert(): unit test for pnid_rtree_insert(). */
+static void test_insert(void)
+{
+  assert(tr && o); 
+  pnid_rtree_insert(tr, o);
+}
+
+static void test_delete(void)
+{
+  assert(tr);
+  pnid_rtree_delete(tr, o);
+}
+
 int test_rtree(void)
 {
-  PnidRtree *db;
-  PnidObj   *o; 
-  int i, n;
+  int i;
 
-  o = pnid_obj_new();  
-  
-  printf("\n========== Pnid R-tree ==========\n");
-  printf("New R-tree (M=%d, m=%d)... ",
-	 pnid_rtree_get_max(), pnid_rtree_get_min());
-  db = pnid_rtree_new();
-  printf("%s\n", db!=NULL ? "PASS." : "FAIL!");
-  assert(db != NULL);
+  fprintf(stderr, "Testing pnid_rtree.o... \n");
 
-  for (i = 0; i < 10; ++i) {
+  test_new();
+
+  for (i=50; i; i--) {
+    o = pnid_obj_new();  
     pnid_obj_set_data(o, RANDOM);
-    pnid_rtree_insert(db, o);
-    n = pnid_rtree_print(db);
-    printf("%d objects inserted, %d objects read... %s\n\n",
-	   i+1, n, i+1==n ? "PASS." : "FAIL!");
-    assert(i+1 == n);
+    test_insert();
   }
+
+  pnid_rtree_print(tr);
+
+  putchar('\n');
+
+  test_delete();
 
   return 0;
 }

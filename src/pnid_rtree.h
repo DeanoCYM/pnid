@@ -16,22 +16,26 @@ typedef struct pnid_rtree PnidRtree;
 
 /* Create and destroy the entire database */
 PnidRtree *pnid_rtree_new(void);
-void       pnid_rtree_delete(PnidRtree *db); 
+void       pnid_rtree_destroy(PnidRtree *tr); 
 
 /* Add and remove individual entries to and from the database*/
-int pnid_rtree_insert(PnidRtree *db, PnidObj *entry);
+int pnid_rtree_insert(PnidRtree *tr, PnidObj *tuple);
+int pnid_rtree_delete(PnidRtree *tr, PnidObj *tuple);
 
 /* Query the database */
 
-#ifndef NDEBUG
+/* Debugging and testing: */
 
-unsigned pnid_rtree_get_max(void);
-unsigned pnid_rtree_get_min(void);
+/* printtree(): print rtree to stdout preorder */
+void pnid_rtree_print(PnidRtree *tr);
 
-/* Print R-tree in pre-order to stdout, returns total number of objects */
-int pnid_rtree_print(PnidRtree *rtr);
+/* pnid_rtree_check(): asserts that the r-tree is correctly formed,
+   does nothing when NDEBUG is defined.  */
+void pnid_rtree_check(struct pnid_rtree *tr);
 
-#endif	/* NDEBUG */
+
+
+
 
 
 #endif /* __PNID_RTREE_H */

@@ -37,11 +37,10 @@ unsigned pnid_box_perimeter (const PnidBox *a);
 unsigned pnid_box_area      (const PnidBox *a);  
 
 /* Calculations on two rectangles */
-unsigned pnid_box_overlap_area    (const PnidBox *a,   const PnidBox *b);
-PnidBox  pnid_box_mbr             (const PnidBox *a,   const PnidBox *b);
-unsigned pnid_box_mbr_enlargement (const PnidBox *mbr, const PnidBox *a);
-int      pnid_box_mbr_waste       (const PnidBox *mbr, const PnidBox *a);
-void     pnid_box_mbr_grow        (PnidBox *mbr,       const PnidBox *a);
+int      pnid_box_is_subset    (const PnidBox *a, const PnidBox *b);
+int      pnid_box_is_separate  (const PnidBox *a, const PnidBox *b);
+unsigned pnid_box_overlap_area (const PnidBox *a, const PnidBox *b);
+PnidBox  pnid_box_mbr          (const PnidBox *a, const PnidBox *b);
 
 /* Set basic properties of a rectangle a */
 void pnid_box_set_left   (PnidBox *a, unsigned left);
