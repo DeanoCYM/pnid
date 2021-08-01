@@ -7,6 +7,10 @@
 #ifndef __PNID_TESTS_H
 #define __PNID_TESTS_H
 
-int test_rtree(void);
+/* RAND100: pseudorandomish number between 1-100 */
+#define RAND100 ((rand() % 100)) 
+
+void test_rtree (void);
+void test_bst   (void);
 
 #endif /* __PNID_TESTS_H */

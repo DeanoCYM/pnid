@@ -34,23 +34,36 @@
    required. */
 
 /* RTMAX: maximum number of records in any node. */
-#define RTMAX   4
+#define RTMAX     4
 /* RTMIN: minimum number of records in any node. Must be <= M/2. */
-#define RTMIN   2
+#define RTMIN     2
 
-typedef PnidBox      Box;		    /* from pnid_box.h */
-typedef struct entry Entry;
-typedef struct node  Node;
+/* STACKMIN: initial stack size */
+#define STACKMIN  50
+
+typedef struct entry   Entry;
+typedef struct node    Node;
+typedef struct results Results;
+typedef PnidBox        Box;
 
 struct pnid_rtree {
-  Node  *root;
-  void  *buf[RTMAX+1];	    /* temp buffer for orphan index entries */
+  Node     *root;
+  Results  *res;	    /* r-tree query results. */
+  void     *buf[RTMAX+1];   /* temp buffer for orphan index entries */
 };
 
 /* node: a leaf or branch node in the r-tree.
 
    For a branch node, each occupied index entry represents a child
-   node, while in a leaf they contain data entries. */
+   node, while in a leaf they contain data entries.
+
+   The index entries of each node, which are of type 'Node' for branch
+   nodes and 'Entry' for leaf nodes, are cast to void pointers to
+   enable function reuse at any level in the tree.
+
+   The mbr of any index entry can be safely retrieved by casting an
+   index entry to type 'Box', as it is the first element of each
+   structure. */
 struct node {
   Box          I;		/* MBR MUST BE FIRST ELEMENT */
   enum {
@@ -67,6 +80,13 @@ struct entry {
   PnidObj *tuple;		/* the database entry */
 };
 
+/* stack: to hold results of r-tree queries. */
+struct results {
+  PnidObj  **buf;		/* pnid object stack */
+  size_t     rem;		/* empty element count */
+  size_t     len;		/* stack buffer size */
+};     
+
 /* r-tree insertion algorithms */
 static int      insert(PnidRtree *tr, Node *n, void *e);
 static Node    *choosenode(Node *n, Box *bbox);
@@ -79,7 +99,13 @@ static size_t   picknext(void **buf, size_t len, Box *I, Box *II);
 static int      delete(PnidRtree *tr, const Entry *e);
 static Node    *findleaf(Node *t, const Entry *e);
 static int      condensetree(struct pnid_rtree *tr, Node *n, Node *q);
-/* mbr and bbox calculations */
+/* search algorithms */
+static Results *search(struct pnid_rtree *tr, const Node *t, const Box *s);
+/* results stack */
+static int      push(Results *stack, PnidObj *tuple);
+static PnidObj *pop(Results *stack);
+static PnidObj *peak(Results *stack);
+/* mbr calculations */
 static void     adjust(Node *n);
 static unsigned area(const Box *a);
 static void     grow(Box *a, const Box *b);
@@ -165,7 +191,6 @@ pnid_rtree_print(PnidRtree *tr)
   printtree(tr->root, 0);
 }
 
-
 /* pnid_rtree_check(): asserts that the r-tree is correctly formed,
    does nothing when NDEBUG is defined.  */
 void pnid_rtree_check(struct pnid_rtree *tr)
@@ -181,17 +206,7 @@ void pnid_rtree_check(struct pnid_rtree *tr)
 }
 
 /*********************
- * R-tree Algorithms:
-
-   Fundamental R-tree algorithms following the those of A. Guttman.
-
-   The index entries of each node, which are of type 'Node' for branch
-   nodes and 'Entry' for leaf nodes, are supplied to the interface as
-   void pointers to enable function reuse at any level in the tree.
-
-   The mbr of any index entry can be safely retrieved by casting an
-   index entry to type 'Box'.
-
+ * R-tree Insertion Algorithms:
 *******************/
 
 /* insert(): insert a new index entry e into the rtree at node n. */
@@ -550,20 +565,47 @@ condensetree(struct pnid_rtree *tr, Node *n, Node *q)
 
    The search algorithms can be performed on points, or regions
    inclusively and exclusively. As entries can overlap, multiple
-   results can be returned and so are accumulated in a stack.
+   results can be returned and so are accumulated in a stack which is
+   returned.
 
 *******************/
 
 /* search(): populates a list of all entries beneath t whose bounding
    box overlaps the search rectangle s. */
-static void
+static Results *
 search(struct pnid_rtree *tr, const Node *t, const Box *s)
 {
+  return NULL;
 }
 
-static void
-append(struct pnid_rtree *tr, const Entry *e)
+/* push(): push tuple to the top of stack. */
+static int
+push(Results *stack, PnidObj *tuple)
 {
+  if (!stack->rem) {
+    stack->rem = stack->len;
+    stack->len *= 2; 
+    if (!(stack->buf = realloc(stack->buf, stack->len * sizeof tuple)))
+      return -ENOMEM;
+  }
+
+  stack->buf[stack->len - stack->rem] = tuple;
+
+  return 0;
+}
+
+/* pop(): pop the top of stack, returns null if empty */
+static PnidObj *
+pop(Results *stack)
+{
+  return stack->rem == stack->len ? NULL : stack->buf[stack->len - stack->rem++];
+}
+
+/* peak(): peak top of stack, returns null if empty */
+static PnidObj *
+peak(Results *stack)
+{
+  return stack->rem == stack->len ? NULL : stack->buf[stack->len - stack->rem];
 }
 
 /*********************
@@ -748,4 +790,3 @@ printtree(const Node *n, int depth)
     for (cur = n->E; *cur; ++cur)
       printtree(*cur, depth+1);
 }
-
